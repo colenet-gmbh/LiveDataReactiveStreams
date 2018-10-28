@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">LiveDataReactiveStreams</string>
+    <string name="button">Refresh</string>
+    <string name="button_error">Error</string>
+    <string name="something_went_wrong">SOMETHING WENT WRONG</string>
+    <string name="that_s_all_we_know">That\'s all we know</string>
+</resources>

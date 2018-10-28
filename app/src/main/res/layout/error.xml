@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+
+        <variable
+            name="visibility"
+            type="Integer"/>
+        <variable
+            name="message"
+            type="String"/>
+
+    </data>
+    <LinearLayout  android:orientation="vertical"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:visibility="@{visibility}">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/something_went_wrong"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{message}"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/that_s_all_we_know"/>
+    </LinearLayout>
+</layout>
