@@ -2,6 +2,7 @@ package de.colenet.livedatareactivestreams
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.fewlaps.quitnowcache.QNCache
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
@@ -10,6 +11,7 @@ sealed class Outcome<T> {
     data class Progress<T>(var loading: Boolean) : Outcome<T>()
     data class Success<T>(var data: T) : Outcome<T>()
     data class Failure<T>(val e: Throwable) : Outcome<T>()
+    data class Empty<T>(val empty: Boolean = true) : Outcome<T>()
 
     companion object {
         fun <T> loading(isLoading: Boolean): Outcome<T> = Progress(isLoading)
@@ -17,6 +19,8 @@ sealed class Outcome<T> {
         fun <T> success(data: T): Outcome<T> = Success(data)
 
         fun <T> failure(e: Throwable): Outcome<T> = Failure(e)
+
+        fun <T> empty(): Outcome<T> = Empty()
     }
 }
 
@@ -34,26 +38,49 @@ fun <T> PublishSubject<T>.toLiveData(compositeDisposable: CompositeDisposable): 
 /**
  * Extension function to push a failed event with an exception to the observing outcome
  * */
-fun <T> PublishSubject<Outcome<T>>.failed(e: Throwable) {
+fun <T> PublishSubject<Outcome<T>>.failed(e: Throwable, cache: QNCache<Outcome<T>>? = null, key: String? = null) {
+    val outcome = Outcome.failure<T>(e)
+    if (cache != null && key != null) {
+        cache.set(key, outcome)
+    }
     with(this){
         loading(false)
-        onNext(Outcome.failure(e))
+        onNext(outcome)
     }
 }
 
 /**
  * Extension function to push  a success event with data to the observing outcome
  * */
-fun <T> PublishSubject<Outcome<T>>.success(t: T) {
+fun <T> PublishSubject<Outcome<T>>.success(t: T, cache: QNCache<Outcome<T>>? = null, key: String? = null) {
+    val outcome = Outcome.success(t)
+    if (cache != null && key != null) {
+        cache.set(key, outcome)
+    }
     with(this){
         loading(false)
-        onNext(Outcome.success(t))
+        onNext(outcome)
     }
 }
 
 /**
  * Extension function to push the loading status to the observing outcome
  * */
-fun <T> PublishSubject<Outcome<T>>.loading(isLoading: Boolean) {
-    this.onNext(Outcome.loading(isLoading))
+fun <T> PublishSubject<Outcome<T>>.loading(isLoading: Boolean, cache: QNCache<Outcome<T>>? = null, key: String? = null) {
+    val outcome = Outcome.loading<T>(isLoading)
+    if (cache != null && key != null) {
+        cache.set(key, outcome)
+    }
+    this.onNext(outcome)
+}
+
+/**
+ * Extension function to push the loading status to the observing outcome
+ * */
+fun <T> PublishSubject<Outcome<T>>.empty(cache: QNCache<Outcome<T>>? = null, key: String? = null) {
+    val outcome = Outcome.empty<T>()
+    if (cache != null && key != null) {
+        cache.set(key, outcome)
+    }
+    this.onNext(outcome)
 }

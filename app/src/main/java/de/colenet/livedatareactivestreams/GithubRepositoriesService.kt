@@ -123,10 +123,15 @@ import retrofit2.http.Path
 //}
 
 data class Repo(val id: String, val name: String, val full_name: String, val private: Boolean)
+data class User(val id: String, val login: String?, val avatar: String?, val bio: String?)
 
 interface GitHubService {
     @GET("users/{user}/repos")
     fun listRepos(@Path("user") user: String): Observable<List<Repo>>
+
+    @GET("users/{user}")
+    fun user(@Path("user") user: String): Observable<User>
+
 }
 
 class GithubRepositoriesService {
@@ -144,6 +149,20 @@ class GithubRepositoriesService {
         val repos = service.listRepos(user)
 
         return repos
+    }
+
+    fun user(user: String): Observable<User> {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://api.github.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .client(client)
+            .build()
+
+        val service = retrofit.create(GitHubService::class.java)
+        val user = service.user(user)
+
+        return user
     }
 
 }
