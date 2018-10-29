@@ -38,11 +38,8 @@ fun <T> PublishSubject<T>.toLiveData(compositeDisposable: CompositeDisposable): 
 /**
  * Extension function to push a failed event with an exception to the observing outcome
  * */
-fun <T> PublishSubject<Outcome<T>>.failed(e: Throwable, cache: QNCache<Outcome<T>>? = null, key: String? = null) {
+fun <T> PublishSubject<Outcome<T>>.failed(e: Throwable) {
     val outcome = Outcome.failure<T>(e)
-    if (cache != null && key != null) {
-        cache.set(key, outcome)
-    }
     with(this){
         loading(false)
         onNext(outcome)
@@ -52,11 +49,8 @@ fun <T> PublishSubject<Outcome<T>>.failed(e: Throwable, cache: QNCache<Outcome<T
 /**
  * Extension function to push  a success event with data to the observing outcome
  * */
-fun <T> PublishSubject<Outcome<T>>.success(t: T, cache: QNCache<Outcome<T>>? = null, key: String? = null) {
+fun <T> PublishSubject<Outcome<T>>.success(t: T) {
     val outcome = Outcome.success(t)
-    if (cache != null && key != null) {
-        cache.set(key, outcome)
-    }
     with(this){
         loading(false)
         onNext(outcome)
@@ -66,21 +60,15 @@ fun <T> PublishSubject<Outcome<T>>.success(t: T, cache: QNCache<Outcome<T>>? = n
 /**
  * Extension function to push the loading status to the observing outcome
  * */
-fun <T> PublishSubject<Outcome<T>>.loading(isLoading: Boolean, cache: QNCache<Outcome<T>>? = null, key: String? = null) {
+fun <T> PublishSubject<Outcome<T>>.loading(isLoading: Boolean) {
     val outcome = Outcome.loading<T>(isLoading)
-    if (cache != null && key != null) {
-        cache.set(key, outcome)
-    }
     this.onNext(outcome)
 }
 
 /**
  * Extension function to push the loading status to the observing outcome
  * */
-fun <T> PublishSubject<Outcome<T>>.empty(cache: QNCache<Outcome<T>>? = null, key: String? = null) {
+fun <T> PublishSubject<Outcome<T>>.empty() {
     val outcome = Outcome.empty<T>()
-    if (cache != null && key != null) {
-        cache.set(key, outcome)
-    }
     this.onNext(outcome)
 }

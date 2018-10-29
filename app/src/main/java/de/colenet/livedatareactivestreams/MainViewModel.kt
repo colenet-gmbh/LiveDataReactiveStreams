@@ -131,7 +131,7 @@ class MainViewModel: ViewModel(), KoinComponent {
             .map { if (it.first || it.second) VISIBLE else GONE }
             .toLiveData(bag)
 
-        error_text = repository.repos
+        error_text = repository.user
             .mapError("") {it.localizedMessage}
             .toLiveData(bag)
 
