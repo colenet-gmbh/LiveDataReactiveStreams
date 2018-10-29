@@ -34,15 +34,7 @@ fun <T> Observable<T>.toObservableField(compositeDisposable: CompositeDisposable
 }
 
 fun <T> Observable<Outcome<T>>.mapLoadingToVisibility(): Observable<Int> {
-    return this
-        .map { it ->
-            when(it) {
-                is Outcome.Success -> View.GONE
-                is Outcome.Failure -> View.GONE
-                is Outcome.Progress -> if (it.loading) View.VISIBLE else View.GONE
-                is Outcome.Empty -> View.GONE
-            }
-        }
+    return this.mapLoading(GONE) {if (it) View.VISIBLE else View.GONE}
 }
 
 

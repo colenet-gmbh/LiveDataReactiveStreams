@@ -95,6 +95,7 @@ class LDRSRepository: KoinComponent {
     }
 
     fun fetchRepos(loginName: String?) {
+        reposCache.clear()
         reposCache.loading(true)
         if (loginName != null) {
             updateInBackground(loginName)
